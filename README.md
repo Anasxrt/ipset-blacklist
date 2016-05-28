@@ -19,6 +19,12 @@ The ipset command doesn't work under OpenVZ. It works fine on dedicated and full
 4. Create the ipset blacklist and insert it into your iptables input filter (see below). After proper testing, make sure to persist it in your firewall script or similar or the rules will be lost after the next reboot.
 5. Auto-update the blacklist using a cron job
 
+## iptables create ipset blacklist
+```
+ipset create blacklist hash:net
+
+```
+
 ## iptables filter rule
 ```
 # Enable blacklists
