@@ -53,6 +53,21 @@ num   pkts bytes target            prot opt in  out source   destination
 4      912 69233 fail2ban-ssh      tcp  --  any any anywhere anywhere     multiport dports ssh
 ```
 The blacklist is most effective if it's the first rule in iptable's INPUT chain.
+```
+iptables -N LOGGING
+iptables -A INPUT -j LOGGING
+iptables -A LOGGING -m limit --limit 2/sec -j LOG --log-prefix "IPTables-Dropped: " --log-level 4
+iptables -A LOGGING -j DROP
+```
+```
+root@test:~# tail -f -n 25 /var/log/messages |grep IPTables-Dropped
+May 28 15:26:18 test kernel: [ 7567.911508] IPTables-Dropped: IN=eth0 OUT= MAC=04:01:4c:3a:98:01:4c:96:14:ff:ff:f0:08:00 SRC=89.238.147.236 DST=128.199.186.89 LEN=60 TOS=0x00 PREC=0x00 TTL=47 ID=51798 DF PROTO=TCP SPT=48568 DPT=10050 WINDOW=14600 RES=0x00 SYN URGP=0 
+May 28 15:26:20 test kernel: [ 7569.911749] IPTables-Dropped: IN=eth0 OUT= MAC=04:01:4c:3a:98:01:4c:96:14:ff:ff:f0:08:00 SRC=89.238.147.236 DST=128.199.186.89 LEN=60 TOS=0x00 PREC=0x00 TTL=47 ID=51799 DF PROTO=TCP SPT=48568 DPT=10050 WINDOW=14600 RES=0x00 SYN URGP=0 
+May 28 15:27:47 test kernel: [ 7657.009053] IPTables-Dropped: IN=eth0 OUT= MAC=04:01:4c:3a:98:01:4c:96:14:ff:df:f0:08:00 SRC=89.238.147.236 DST=128.199.186.89 LEN=60 TOS=0x00 PREC=0x00 TTL=47 ID=8956 DF PROTO=TCP SPT=51159 DPT=10050 WINDOW=14600 RES=0x00 SYN URGP=0 
+May 28 15:27:48 test kernel: [ 7658.008130] IPTables-Dropped: IN=eth0 OUT= MAC=04:01:4c:3a:98:01:4c:96:14:ff:df:f0:08:00 SRC=89.238.147.236 DST=128.199.186.89 LEN=60 TOS=0x00 PREC=0x00 TTL=47 ID=8957 DF PROTO=TCP SPT=51159 DPT=10050 WINDOW=14600 RES=0x00 SYN URGP=0 
+
+```
+
 
 ## Modify the blacklists you want to use
 Edit the BLACKLIST array in /etc/ipset-blacklist/ipset-blacklist.conf to add or remove blacklists, or use it to add your own blacklists.
